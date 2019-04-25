@@ -18,6 +18,7 @@ outputFile = open("ros_basestation_data.txt", "a+")
 
 defaultUnixStamp = 0
 isAddUnixTimestamp2basedata = 0
+replicationtimes = 1
 
 with open(rosFilename) as ros_object:
     ros_reader = csv.reader(ros_object)
@@ -41,8 +42,9 @@ with open(rosFilename) as ros_object:
 
             if (int(ros_timestamp)) == post_ros_data[line-1]:
                 temp_list2 = row_ros
+                replicationtimes = replicationtimes + 1 
                 for i in range(0,3):
-                    temp_list2[i] = str((float(temp_list1[i]) + float(row_ros[i])) / 2)
+                    temp_list2[i] = str((float(temp_list1[i])*(replicationtimes-1) + float(row_ros[i])) / replicationtimes)
                 temp_list2[0] = row_ros[0]
                 temp_list1 = temp_list2
                 print("Dulplicate ros timestap lines: %d", line)
@@ -51,6 +53,8 @@ with open(rosFilename) as ros_object:
                 outRosFile.write("\n")
                 outRosFile.flush()
                 writelines = writelines + 1
+                replicationtimes = 1
+
                 temp_list1 = row_ros
             line = line + 1
 with open(outRosFilename) as post_ros_object:
